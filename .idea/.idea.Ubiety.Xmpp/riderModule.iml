@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="RIDER_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$/../..">
+      <sourceFolder url="file://$MODULE_DIR$/../../Libidn.Standard" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../Ubiety.Xmpp" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/../../Libidn.Standard/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/../../Libidn.Standard/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/../../Ubiety.Xmpp/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/../../Ubiety.Xmpp/obj" />
+      <excludeFolder url="file://$MODULE_DIR$/../../packages" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
