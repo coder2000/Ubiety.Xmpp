@@ -26,7 +26,7 @@ namespace Ubiety.Xmpp.Net
     public class AsyncSocket : ISocket, IDisposable
     {
         private readonly Address _address;
-        private IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
         private CancellationTokenSource _cts;
         private Socket _socket;
         private Stream _stream;
@@ -47,6 +47,11 @@ namespace Ubiety.Xmpp.Net
 
         public void Connect(string hostname)
         {
+            if (hostname == null)
+            {
+                throw new ArgumentNullException(nameof(hostname));
+            }
+            
             _address.Hostname = hostname;
             var address = _address.NextIpAddress();
 
@@ -62,11 +67,17 @@ namespace Ubiety.Xmpp.Net
 
         public void Connect(JID jid)
         {
+            if (jid == null)
+            {
+                throw new ArgumentNullException(nameof(jid));
+            }
+            
             Connect(jid.Server);
         }
 
         public void Disconnect()
         {
+            IsConnected = false;
             _socket.Shutdown(SocketShutdown.Both);
         }
 
@@ -77,18 +88,19 @@ namespace Ubiety.Xmpp.Net
 
         public void StartSsl()
         {
-            throw new NotImplementedException();
+            var useSsl = _configuration.GetValue<bool>("XmppConfiguration:UseSSL");
         }
 
         public event EventHandler<DataEventArgs> Data;
         public event EventHandler Connected;
 
-        protected virtual void OnData(DataEventArgs args)
+        private void OnData(string data)
         {
+            var args = new DataEventArgs(data);
             Data?.Invoke(this, args);
         }
 
-        protected virtual void OnConnected()
+        private void OnConnected()
         {
             Connected?.Invoke(this, new EventArgs());
         }
@@ -120,8 +132,7 @@ namespace Ubiety.Xmpp.Net
                 if (IsConnected == false)
                     break;
 
-                var args = new DataEventArgs(data);
-                OnData(args);
+                OnData(data);
 
                 var text = await ReadData(_cts.Token);
                 data = text;

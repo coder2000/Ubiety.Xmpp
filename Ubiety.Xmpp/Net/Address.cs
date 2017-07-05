@@ -24,7 +24,7 @@ using NLog;
 
 namespace Ubiety.Xmpp.Net
 {
-    public class Address
+    public sealed class Address
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IConfiguration _config;
@@ -60,9 +60,11 @@ namespace Ubiety.Xmpp.Net
             if (IPAddress.TryParse(Hostname, out address))
                 return new IPEndPoint(address, _config.GetValue<int>("XmppConfiguration:DefaultPort"));
 
-            ResolveSrv();
+            bool srvAvailable;
+            if (!_srvRecords.Any())
+                srvAvailable = ResolveSrv();
 
-            if (_srvRecords.Any() && _srvAttempts <= _srvRecords.Count())
+            if (srvAvailable || (_srvRecords.Any() && _srvAttempts <= _srvRecords.Count()))
             {
                 Logger.Debug("Found SRV record...");
                 var port = _srvRecords.ElementAt(_srvAttempts).PORT;
@@ -95,10 +97,8 @@ namespace Ubiety.Xmpp.Net
                 return false;
             }
 
-            _srvRecords = from record in response.Answers
-                where record.RECORD is RecordSRV
-                orderby ((RecordSRV) record.RECORD).PRIORITY descending
-                select record.RECORD as RecordSRV;
+            _srvRecords = response.RecordsSRV.OrderBy(record => record.PRIORITY)
+                .ThenByDescending(record => record.WEIGHT);
 
             return true;
         }
@@ -112,18 +112,17 @@ namespace Ubiety.Xmpp.Net
                 Logger.Debug("Resolving IPv6 address...");
                 response = _resolver.Query(hostname, QType.AAAA).Result;
 
-                if (response.Answers.Count > 0)
+                if (response.RecordsAAAA.Length > 0)
                 {
                     IsIPv6 = true;
-                    return ((RecordAAAA) response.Answers[0].RECORD).Address;
+                    return response.RecordsAAAA.FirstOrDefault().Address;
                 }
             }
 
             Logger.Debug("Resolving IPv4 address...");
             response = _resolver.Query(hostname, QType.A).Result;
 
-            return response.Answers.Select(answer => answer.RECORD).OfType<RecordA>().Select(a => a.Address)
-                .FirstOrDefault();
+            return response.RecordsA.FirstOrDefault().Address;
         }
 
         private IPEndPoint[] GetDnsServers()
