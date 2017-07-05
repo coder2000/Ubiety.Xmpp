@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ubiety.Xmpp", "Ubiety.Xmpp/
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libidn.Standard", "Libidn.Standard\Libidn.Standard.csproj", "{BB7D3838-70E2-4282-A8B6-254107BFBB5C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ubiety.TestApp", "Ubiety.TestApp\Ubiety.TestApp.csproj", "{8BC22BFE-2E12-47A8-8CF6-A7E18E8BE1A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{BB7D3838-70E2-4282-A8B6-254107BFBB5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB7D3838-70E2-4282-A8B6-254107BFBB5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB7D3838-70E2-4282-A8B6-254107BFBB5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BC22BFE-2E12-47A8-8CF6-A7E18E8BE1A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BC22BFE-2E12-47A8-8CF6-A7E18E8BE1A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BC22BFE-2E12-47A8-8CF6-A7E18E8BE1A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BC22BFE-2E12-47A8-8CF6-A7E18E8BE1A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
