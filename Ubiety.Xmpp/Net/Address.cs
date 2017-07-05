@@ -60,7 +60,7 @@ namespace Ubiety.Xmpp.Net
             if (IPAddress.TryParse(Hostname, out address))
                 return new IPEndPoint(address, _config.GetValue<int>("XmppConfiguration:DefaultPort"));
 
-            bool srvAvailable;
+            var srvAvailable = false;
             if (!_srvRecords.Any())
                 srvAvailable = ResolveSrv();
 
@@ -90,6 +90,12 @@ namespace Ubiety.Xmpp.Net
         {
             Logger.Debug("Resolving SRV records...");
             var response = _resolver.Query($"_xmpp-client._tcp.{Hostname}", QType.SRV).Result;
+
+            if (!string.IsNullOrEmpty(response.Error))
+            {
+                Logger.Error($"DNS Error: {response.Error}");
+                throw new Exception(response.Error);
+            }
 
             if (response.header.ANCOUNT <= 0)
             {
