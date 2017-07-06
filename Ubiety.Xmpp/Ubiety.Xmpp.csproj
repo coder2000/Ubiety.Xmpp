@@ -1,13 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Heijden.Dns.Portable" Version="2.0.19" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.0.0-preview2-final" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0-preview2-final" />
-    <PackageReference Include="NETStandard.Library" Version="2.0.0-preview2-25401-01" />
+    <PackageReference Include="NLog" Version="5.0.0-beta09" />
     <PackageReference Include="Stateless" Version="4.0.0-dev-00244" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Primitives" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Libidn.Standard\Libidn.Standard.csproj" />

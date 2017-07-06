@@ -1,0 +1,7 @@
+{
+  "XmppConfiguration": {
+    "DefaultPort": "5552",
+    "UseIPv6": "false",
+    "DnsServers": ["8.8.8.8"]
+  }
+}
