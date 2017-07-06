@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Ubiety.Xmpp.Net;
 using Ubiety.Xmpp.States;
@@ -18,6 +19,8 @@ namespace Ubiety.Xmpp
             _stateManager = new StateManager();
         }
 
+        public static string Version;
+            
         public void Connect()
         {
             var socket = new AsyncSocket(_configuration.Build());
