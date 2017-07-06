@@ -1,4 +1,4 @@
-image: micorosft/dotnet:latest
+image: microsoft/dotnet:latest
 stages:
   - build
 before_script:
