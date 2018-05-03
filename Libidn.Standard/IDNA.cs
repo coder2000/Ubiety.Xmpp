@@ -250,7 +250,7 @@ namespace Gnu.Inet.Encoding
 				{
 					input = Stringprep.NamePrep(input, allowUnassigned);
 				}
-				catch (StringprepException e)
+				catch (StringprepException)
 				{
 					// ToUnicode never fails!
 					return original;
@@ -279,7 +279,7 @@ namespace Gnu.Inet.Encoding
 			{
 				output = Punycode.Decode(input);
 			}
-			catch (PunycodeException e)
+			catch (PunycodeException)
 			{
 				// ToUnicode never fails!
 				return original;
@@ -293,7 +293,7 @@ namespace Gnu.Inet.Encoding
 			{
 				ascii = ToASCII(output, allowUnassigned, useSTD3ASCIIRules);
 			}
-			catch (IDNAException e)
+			catch (IDNAException)
 			{
 				// ToUnicode never fails!
 				return original;

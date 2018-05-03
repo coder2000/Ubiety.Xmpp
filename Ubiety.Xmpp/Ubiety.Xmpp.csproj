@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <DocumentationFile>bin/$(Configuration)/$(TargetFramework)/$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Heijden.Dns.Portable" Version="2.0.19" />
@@ -9,6 +10,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.0-preview2-final" />
     <PackageReference Include="NLog" Version="4.5.3" />
     <PackageReference Include="Stateless" Version="4.1.0-dev-00299" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Primitives" Version="4.3.0" />
