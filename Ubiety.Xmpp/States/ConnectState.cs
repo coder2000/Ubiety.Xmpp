@@ -6,14 +6,17 @@ using Ubiety.Xmpp.Net;
 namespace Ubiety.Xmpp.States
 {
     /// <summary>
+    ///     Connect state of the protocol
     /// </summary>
     public class ConnectState : State
     {
         /// <summary>
+        ///     Create a new instance of the Connect state
         /// </summary>
         public ConnectState() : base("Connect") {}
 
         /// <summary>
+        ///     Initiate connection to the server
         /// </summary>
         public static void Connect(ISocket socket)
         {

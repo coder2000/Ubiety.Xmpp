@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using Heijden.Dns.Portable;
 using Heijden.DNS;
+using Heijden.Dns.Portable;
 using Microsoft.Extensions.Configuration;
 using NLog;
 

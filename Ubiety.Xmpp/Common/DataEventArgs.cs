@@ -18,7 +18,7 @@ namespace Ubiety.Xmpp.Common
         {
             Data = data;
         }
-        
+
         /// <summary>
         /// Data property to hold the string
         /// </summary>

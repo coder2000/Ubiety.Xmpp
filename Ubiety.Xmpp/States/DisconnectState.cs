@@ -4,10 +4,12 @@
 namespace Ubiety.Xmpp.States
 {
     /// <summary>
+    ///     Disconnect starts the process of shutting down
     /// </summary>
     public class DisconnectState : State
     {
         /// <summary>
+        ///     Create a new instance of the disconnect state
         /// </summary>
         public DisconnectState() : base("Disconnect")
         {

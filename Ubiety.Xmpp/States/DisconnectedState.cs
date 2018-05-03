@@ -4,10 +4,12 @@
 namespace Ubiety.Xmpp.States
 {
     /// <summary>
+    ///     Disconnected and inital state of XMPP
     /// </summary>
     public class DisconnectedState : State
     {
         /// <summary>
+        ///     Create a new instance of the disconnected state
         /// </summary>
         public DisconnectedState() : base("Disconnected") {}
     }
