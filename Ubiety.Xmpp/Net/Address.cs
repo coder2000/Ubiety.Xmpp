@@ -1,16 +1,16 @@
-﻿//Copyright 2017 Dieter Lunn
+﻿// Copyright 2017 Dieter Lunn
 //
-//Licensed under the Apache License, Version 2.0 (the "License");
-//you may not use this file except in compliance with the License.
-//You may obtain a copy of the License at
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
-//Unless required by applicable law or agreed to in writing, software
-//distributed under the License is distributed on an "AS IS" BASIS,
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//See the License for the specific language governing permissions and
-//limitations under the License.
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 using System;
 using System.Collections.Generic;
@@ -24,6 +24,8 @@ using NLog;
 
 namespace Ubiety.Xmpp.Net
 {
+    /// <summary>
+    /// </summary>
     public sealed class Address
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -32,6 +34,8 @@ namespace Ubiety.Xmpp.Net
         private int _srvAttempts;
         private IEnumerable<RecordSRV> _srvRecords = new List<RecordSRV>();
 
+        /// <summary>
+        /// </summary>
         public Address(IConfiguration config)
         {
             _config = config;
@@ -50,9 +54,15 @@ namespace Ubiety.Xmpp.Net
             _resolver.OnVerbose += (sender, args) => { Logger.Debug($"DNS verbose message: {args.Message}"); };
         }
 
+        /// <summary>
+        /// </summary>
         public string Hostname { private get; set; }
+        /// <summary>
+        /// </summary>
         public bool IsIPv6 { get; private set; }
 
+        /// <summary>
+        /// </summary>
         public IPEndPoint NextIpAddress()
         {
             IPAddress address;

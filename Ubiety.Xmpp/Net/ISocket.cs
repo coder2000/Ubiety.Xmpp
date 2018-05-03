@@ -17,15 +17,33 @@ using Ubiety.Xmpp.Common;
 
 namespace Ubiety.Xmpp.Net
 {
+    /// <summary>
+    /// </summary>
     public interface ISocket
     {
+        /// <summary>
+        /// </summary>
         bool IsConnected { get; }
+        /// <summary>
+        /// </summary>
         void Connect(string hostname);
+        /// <summary>
+        /// </summary>
         void Connect(JID jid);
+        /// <summary>
+        /// </summary>
         void Disconnect();
+        /// <summary>
+        /// </summary>
         void Write(string message);
+        /// <summary>
+        /// </summary>
         void StartSsl();
+        /// <summary>
+        /// </summary>
         event EventHandler<DataEventArgs> Data;
+        /// <summary>
+        /// </summary>
         event EventHandler Connected;
     }
 }

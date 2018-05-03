@@ -23,6 +23,8 @@ using Ubiety.Xmpp.Common;
 
 namespace Ubiety.Xmpp.Net
 {
+    /// <summary>
+    /// </summary>
     public class AsyncSocket : ISocket, IDisposable
     {
         private readonly Address _address;
@@ -31,20 +33,28 @@ namespace Ubiety.Xmpp.Net
         private Socket _socket;
         private Stream _stream;
 
+        /// <summary>
+        /// </summary>
         public AsyncSocket(IConfiguration configuration)
         {
             _configuration = configuration;
             _address = new Address(configuration);
         }
 
+        /// <summary>
+        /// </summary>
         public void Dispose()
         {
             _stream.Dispose();
             _socket.Dispose();
         }
 
+        /// <summary>
+        /// </summary>
         public bool IsConnected { get; private set; }
 
+        /// <summary>
+        /// </summary>
         public void Connect(string hostname)
         {
             if (hostname == null)
@@ -65,6 +75,8 @@ namespace Ubiety.Xmpp.Net
             _socket.ConnectAsync(args);
         }
 
+        /// <summary>
+        /// </summary>
         public void Connect(JID jid)
         {
             if (jid == null)
@@ -75,23 +87,33 @@ namespace Ubiety.Xmpp.Net
             Connect(jid.Server);
         }
 
+        /// <summary>
+        /// </summary>
         public void Disconnect()
         {
             IsConnected = false;
             _socket.Shutdown(SocketShutdown.Both);
         }
 
+        /// <summary>
+        /// </summary>
         public void Write(string message)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// </summary>
         public void StartSsl()
         {
             var useSsl = _configuration.GetValue<bool>("XmppConfiguration:UseSSL");
         }
 
+        /// <summary>
+        /// </summary>
         public event EventHandler<DataEventArgs> Data;
+        /// <summary>
+        /// </summary>
         public event EventHandler Connected;
 
         private void OnData(string data)

@@ -3,9 +3,9 @@
 
     "settings": {
         "indentation": {
-            "useTabs": false,
-            "indentationSize": 2,
-            "tabSize": 2
+            "useTabs": true,
+            "indentationSize": 4,
+            "tabSize": 4
         },
         "orderingRules": {
             "usingDirectivesPlacement": "outsideNamespace"
