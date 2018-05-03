@@ -1,4 +1,7 @@
-﻿using Stateless;
+﻿// Copyright (c) Dieter Lunn. All rights reserved.
+// Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
+
+using Stateless;
 using Ubiety.Xmpp.Net;
 
 namespace Ubiety.Xmpp.States
