@@ -6,12 +6,12 @@ using System;
 namespace Ubiety.Xmpp.Common
 {
     /// <summary>
-    /// Event args used to pass string data
+    ///     Event args used to pass string data
     /// </summary>
     public class DataEventArgs : EventArgs
     {
         /// <summary>
-        /// Create a new instance of DataEventArgs
+        ///     Create a new instance of DataEventArgs
         /// </summary>
         /// <param name="data">Data for the args to store</param>
         public DataEventArgs(string data)
@@ -20,7 +20,7 @@ namespace Ubiety.Xmpp.Common
         }
 
         /// <summary>
-        /// Data property to hold the string
+        ///     Gets the current data
         /// </summary>
         public string Data { get; }
     }

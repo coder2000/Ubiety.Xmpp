@@ -9,14 +9,14 @@ using Gnu.Inet.Encoding;
 namespace Ubiety.Xmpp.Common
 {
     /// <summary>
-    /// Jabber ID implementation
+    ///     Jabber ID implementation
     /// </summary>
     public struct JID : IEquatable<JID>
     {
-        private string _resource;
-        private string _server;
-        private string _user;
-        private string _xid;
+        private string resource;
+        private string server;
+        private string user;
+        private string xid;
 
         /// <summary>
         ///     Creates a new JID from a string representation
@@ -38,6 +38,46 @@ namespace Ubiety.Xmpp.Common
             User = user;
             Server = server;
             Resource = resource;
+        }
+
+        /// <summary>
+        ///     Gets the username of the user.
+        /// </summary>
+        public string User
+        {
+            get => Unescape();
+            private set
+            {
+                var tmp = Escape(value);
+                user = Stringprep.NodePrep(tmp);
+            }
+        }
+
+        /// <summary>
+        ///     Gets the server the user is logged into.
+        /// </summary>
+        public string Server
+        {
+            get => server;
+            private set => server = (value == null) ? null : Stringprep.NamePrep(value);
+        }
+
+        /// <summary>
+        ///     Gets the resource the user is communicating from.
+        /// </summary>
+        public string Resource
+        {
+            get => resource;
+            private set => resource = (value == null) ? null : Stringprep.ResourcePrep(value);
+        }
+
+        /// <summary>
+        ///     String representation of the id.
+        /// </summary>
+        private string XmppId
+        {
+            get => xid ?? BuildJid();
+            set => Parse(value);
         }
 
         /// <summary>
@@ -90,59 +130,14 @@ namespace Ubiety.Xmpp.Common
             {
                 return XmppId.Equals(obj);
             }
+
             if (!(obj is JID))
             {
                 return false;
             }
 
-            return XmppId.Equals(((JID) obj).XmppId);
+            return XmppId.Equals(((JID)obj).XmppId);
         }
-
-        #region {{ Properties }}
-
-        /// <summary>
-        ///     String representation of the id.
-        /// </summary>
-        private string XmppId
-        {
-            get => _xid ?? BuildJid();
-            set => Parse(value);
-        }
-
-        /// <summary>
-        ///     Username of the user.
-        /// </summary>
-        public string User
-        {
-            get => Unescape();
-            private set
-            {
-                var tmp = Escape(value);
-                _user = Stringprep.NodePrep(tmp);
-            }
-        }
-
-        /// <summary>
-        ///     Server the user is logged into.
-        /// </summary>
-        public string Server
-        {
-            get => _server;
-            private set => _server = (value == null) ? null : Stringprep.NamePrep(value);
-        }
-
-        /// <summary>
-        ///     Resource the user is communicating from.
-        /// </summary>
-        public string Resource
-        {
-            get => _resource;
-            private set => _resource = (value == null) ? null : Stringprep.ResourcePrep(value);
-        }
-
-        #endregion
-
-        #region {{ Operators }}
 
         /// <summary>
         /// </summary>
@@ -182,10 +177,6 @@ namespace Ubiety.Xmpp.Common
             return one.XmppId;
         }
 
-        #endregion
-
-        #region {{ Build and Parse functions }}
-
         /// <summary>
         ///     Builds a string version of an XID from the three parts.
         /// </summary>
@@ -193,20 +184,21 @@ namespace Ubiety.Xmpp.Common
         private string BuildJid()
         {
             var sb = new StringBuilder();
-            if (_user != null)
+            if (user != null)
             {
-                sb.Append(_user);
+                sb.Append(user);
                 sb.Append("@");
             }
-            sb.Append(_server);
-            if (_resource != null)
+
+            sb.Append(server);
+            if (resource != null)
             {
                 sb.Append("/");
-                sb.Append(_resource);
+                sb.Append(resource);
             }
 
-            _xid = sb.ToString();
-            return _xid;
+            xid = sb.ToString();
+            return xid;
         }
 
         /// <summary>
@@ -253,10 +245,6 @@ namespace Ubiety.Xmpp.Common
             }
         }
 
-        #endregion
-
-        #region {{ XEP-0106 JID Escaping }}
-
         private static string Escape(string user)
         {
             var u = new StringBuilder();
@@ -302,6 +290,7 @@ namespace Ubiety.Xmpp.Common
                         u.Append(c);
                         break;
                 }
+
                 count++;
             }
 
@@ -311,7 +300,7 @@ namespace Ubiety.Xmpp.Common
         private string Unescape()
         {
             var re = new Regex(@"\\([2-5][0267face])");
-            var u = re.Replace(_user, delegate(Match m)
+            var u = re.Replace(user, delegate(Match m)
             {
                 switch (m.Groups[1].Value)
                 {
@@ -342,7 +331,5 @@ namespace Ubiety.Xmpp.Common
 
             return u;
         }
-
-        #endregion
     }
 }

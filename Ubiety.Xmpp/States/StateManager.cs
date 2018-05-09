@@ -7,37 +7,38 @@ using Ubiety.Xmpp.Net;
 namespace Ubiety.Xmpp.States
 {
     /// <summary>
+    ///     
     /// </summary>
     public class StateManager
     {
-        private readonly StateMachine<State, StateTriggers> _stateMachine;
-        private readonly StateMachine<State, StateTriggers>.TriggerWithParameters<ISocket> _connectTrigger;
-        
+        private readonly StateMachine<State, StateTriggers> stateMachine;
+        private readonly StateMachine<State, StateTriggers>.TriggerWithParameters<ISocket> connectTrigger;
+
         /// <summary>
         /// </summary>
         public StateManager()
         {
-            _stateMachine = new StateMachine<State, StateTriggers>(new DisconnectedState());
+            stateMachine = new StateMachine<State, StateTriggers>(new DisconnectedState());
 
-            _stateMachine.Configure(new DisconnectState()).Permit(StateTriggers.Disconnect, new DisconnectedState());
+            stateMachine.Configure(new DisconnectState()).Permit(StateTriggers.Disconnect, new DisconnectedState());
 
-            _connectTrigger = _stateMachine.SetTriggerParameters<ISocket>(StateTriggers.Connect);
-            _stateMachine.Configure(new DisconnectedState()).Permit(StateTriggers.Connect, new ConnectState());
-            _stateMachine.Configure(new ConnectState()).OnEntryFrom(_connectTrigger, ConnectState.Connect);
+            connectTrigger = stateMachine.SetTriggerParameters<ISocket>(StateTriggers.Connect);
+            stateMachine.Configure(new DisconnectedState()).Permit(StateTriggers.Connect, new ConnectState());
+            stateMachine.Configure(new ConnectState()).OnEntryFrom(connectTrigger, ConnectState.Connect);
         }
 
         /// <summary>
         /// </summary>
         public void Fire(StateTriggers triggers)
         {
-            _stateMachine.Fire(triggers);
+            stateMachine.Fire(triggers);
         }
 
         /// <summary>
         /// </summary>
         public void FireConnect(ISocket socket)
         {
-            _stateMachine.Fire(_connectTrigger, socket);
+            stateMachine.Fire(connectTrigger, socket);
         }
     }
 }

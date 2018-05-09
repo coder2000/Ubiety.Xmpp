@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Dieter Lunn. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-
 using System;
 using System.IO;
 using System.Net.Sockets;
@@ -51,7 +50,7 @@ namespace Ubiety.Xmpp.Net
             {
                 throw new ArgumentNullException(nameof(hostname));
             }
-            
+
             _address.Hostname = hostname;
             var address = _address.NextIpAddress();
 
@@ -59,7 +58,7 @@ namespace Ubiety.Xmpp.Net
                 ? new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp)
                 : new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            var args = new SocketAsyncEventArgs {RemoteEndPoint = address};
+            var args = new SocketAsyncEventArgs { RemoteEndPoint = address };
             args.Completed += ConnectCompleted;
 
             _socket.ConnectAsync(args);
@@ -73,7 +72,7 @@ namespace Ubiety.Xmpp.Net
             {
                 throw new ArgumentNullException(nameof(jid));
             }
-            
+
             Connect(jid.Server);
         }
 

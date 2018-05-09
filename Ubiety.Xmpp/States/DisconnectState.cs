@@ -11,9 +11,6 @@ namespace Ubiety.Xmpp.States
         /// <summary>
         ///     Create a new instance of the disconnect state
         /// </summary>
-        public DisconnectState() : base("Disconnect")
-        {
-            
-        }
+        public DisconnectState() : base("Disconnect") { }
     }
 }

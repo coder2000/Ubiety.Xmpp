@@ -10,32 +10,36 @@ using Ubiety.Xmpp.States;
 namespace Ubiety.Xmpp
 {
     /// <summary>
+    ///     Main class
     /// </summary>
     public class Xmpp
     {
-        private readonly IConfigurationBuilder _configuration;
-        private readonly StateManager _stateManager;
+        private readonly IConfigurationBuilder configuration;
+        private readonly StateManager stateManager;
 
         /// <summary>
+        ///     Construct a new instance
         /// </summary>
         public Xmpp()
         {
-            _configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+            configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("XmppConfig.json");
-            
-            _stateManager = new StateManager();
+
+            stateManager = new StateManager();
         }
 
         /// <summary>
+        ///     Gets the current version of the library
         /// </summary>
-        public static string Version;
-            
+        public static string Version { get; }
+
         /// <summary>
+        ///     Connect to a server
         /// </summary>
         public void Connect()
         {
-            var socket = new AsyncSocket(_configuration.Build());
-            _stateManager.FireConnect(socket);
+            var socket = new AsyncSocket(configuration.Build());
+            stateManager.FireConnect(socket);
         }
     }
 }

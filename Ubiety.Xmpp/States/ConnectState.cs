@@ -13,7 +13,7 @@ namespace Ubiety.Xmpp.States
         /// <summary>
         ///     Create a new instance of the Connect state
         /// </summary>
-        public ConnectState() : base("Connect") {}
+        public ConnectState() : base("Connect") { }
 
         /// <summary>
         ///     Initiate connection to the server
