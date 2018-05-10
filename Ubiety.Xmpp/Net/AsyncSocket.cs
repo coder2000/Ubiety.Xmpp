@@ -13,37 +13,45 @@ using Ubiety.Xmpp.Common;
 namespace Ubiety.Xmpp.Net
 {
     /// <summary>
+    ///     Protocol socket for asynchronous connections
     /// </summary>
-    public class AsyncSocket : ISocket, IDisposable
+    public sealed class AsyncSocket : ISocket, IDisposable
     {
-        private readonly Address _address;
-        private readonly IConfiguration _configuration;
-        private CancellationTokenSource _cts;
-        private Socket _socket;
-        private Stream _stream;
+        private readonly Address address;
+        private readonly IConfiguration configuration;
+        private CancellationTokenSource cts;
+        private Socket socket;
+        private Stream stream;
 
         /// <summary>
+        ///     Initializes a new instance of the <see cref="AsyncSocket" /> class
         /// </summary>
+        /// <param name="configuration">Library configuration</param>
         public AsyncSocket(IConfiguration configuration)
         {
-            _configuration = configuration;
-            _address = new Address(configuration);
+            this.configuration = configuration;
+            this.address = new Address(configuration);
         }
 
         /// <summary>
+        ///     Fires when new data is available from the socket
         /// </summary>
-        public void Dispose()
-        {
-            _stream.Dispose();
-            _socket.Dispose();
-        }
+        public event EventHandler<DataEventArgs> Data;
 
         /// <summary>
+        ///     Fires when the socket is connected
+        /// </summary>
+        public event EventHandler Connected;
+
+        /// <summary>
+        ///     Gets a value whether the socket is connected or not
         /// </summary>
         public bool IsConnected { get; private set; }
 
         /// <summary>
+        ///     Connect the socket to a server
         /// </summary>
+        /// <param name="hostname">Server hostname to connect to</param>
         public void Connect(string hostname)
         {
             if (hostname == null)
@@ -51,21 +59,23 @@ namespace Ubiety.Xmpp.Net
                 throw new ArgumentNullException(nameof(hostname));
             }
 
-            _address.Hostname = hostname;
-            var address = _address.NextIpAddress();
+            this.address.Hostname = hostname;
+            var address = this.address.NextIpAddress();
 
-            _socket = _address.IsIPv6
+            this.socket = this.address.IsIPv6
                 ? new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp)
                 : new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             var args = new SocketAsyncEventArgs { RemoteEndPoint = address };
             args.Completed += ConnectCompleted;
 
-            _socket.ConnectAsync(args);
+            this.socket.ConnectAsync(args);
         }
 
         /// <summary>
+        ///     Connect the socket to a server
         /// </summary>
+        /// <param name="jid">Jabber user id to connect to</param>
         public void Connect(JID jid)
         {
             if (jid == null)
@@ -77,33 +87,46 @@ namespace Ubiety.Xmpp.Net
         }
 
         /// <summary>
+        ///     Disconnect the socket from the server
         /// </summary>
         public void Disconnect()
         {
             IsConnected = false;
-            _socket.Shutdown(SocketShutdown.Both);
+            this.socket.Shutdown(SocketShutdown.Both);
         }
 
         /// <summary>
+        ///     Disposes the current instance
         /// </summary>
+        public void Dispose()
+        {
+            if (IsConnected)
+            {
+                Disconnect();
+            }
+
+            this.stream.Dispose();
+            this.socket.Dispose();
+
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     Write a string message to the server
+        /// </summary>
+        /// <param name="message">String to send to the server</param>
         public void Write(string message)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
+        ///     Start SSL encryption of the socket
         /// </summary>
         public void StartSsl()
         {
-            var useSsl = _configuration.GetValue<bool>("XmppConfiguration:UseSSL");
+            var useSsl = this.configuration.GetValue<bool>("XmppConfiguration:UseSSL");
         }
-
-        /// <summary>
-        /// </summary>
-        public event EventHandler<DataEventArgs> Data;
-        /// <summary>
-        /// </summary>
-        public event EventHandler Connected;
 
         private void OnData(string data)
         {
@@ -121,17 +144,17 @@ namespace Ubiety.Xmpp.Net
             IsConnected = true;
             OnConnected();
 
-            _cts = new CancellationTokenSource(5000);
+            this.cts = new CancellationTokenSource(5000);
 
-            _stream = new NetworkStream(e.ConnectSocket);
-            var data = await ReadData(_cts.Token);
+            this.stream = new NetworkStream(e.ConnectSocket);
+            var data = await ReadData(this.cts.Token);
             await ReadDataContinuous(data);
         }
 
         private async Task<string> ReadData(CancellationToken token)
         {
             var buffer = new byte[4096];
-            var result = await _stream.ReadAsync(buffer, 0, buffer.Length, token);
+            var result = await this.stream.ReadAsync(buffer, 0, buffer.Length, token);
             Array.Resize(ref buffer, result);
             return Encoding.ASCII.GetString(buffer);
         }
@@ -145,7 +168,7 @@ namespace Ubiety.Xmpp.Net
 
                 OnData(data);
 
-                var text = await ReadData(_cts.Token);
+                var text = await ReadData(this.cts.Token);
                 data = text;
             }
         }

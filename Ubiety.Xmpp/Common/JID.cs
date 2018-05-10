@@ -72,12 +72,50 @@ namespace Ubiety.Xmpp.Common
         }
 
         /// <summary>
-        ///     String representation of the id.
+        ///     Gets or sets the string representation of the id.
         /// </summary>
         private string XmppId
         {
             get => xid ?? BuildJid();
             set => Parse(value);
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="one"></param>
+        /// <returns></returns>
+        public static implicit operator JID(string one)
+        {
+            return new JID(one);
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="one"></param>
+        /// <returns></returns>
+        public static implicit operator string(JID one)
+        {
+            return one.XmppId;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        /// <returns></returns>
+        public static bool operator ==(JID one, JID two)
+        {
+            return one.Equals(two);
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        /// <returns></returns>
+        public static bool operator !=(JID one, JID two)
+        {
+            return !one.Equals(two);
         }
 
         /// <summary>
@@ -139,42 +177,56 @@ namespace Ubiety.Xmpp.Common
             return XmppId.Equals(((JID)obj).XmppId);
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="one"></param>
-        /// <param name="two"></param>
-        /// <returns></returns>
-        public static bool operator ==(JID one, JID two)
+        private static string Escape(string user)
         {
-            return one.Equals(two);
-        }
+            var u = new StringBuilder();
+            var count = 0;
 
-        /// <summary>
-        /// </summary>
-        /// <param name="one"></param>
-        /// <param name="two"></param>
-        /// <returns></returns>
-        public static bool operator !=(JID one, JID two)
-        {
-            return !one.Equals(two);
-        }
+            foreach (var c in user)
+            {
+                switch (c)
+                {
+                    case ' ':
+                        if ((count == 0) || (count == (user.Length - 1)))
+                            throw new FormatException("Username cannot start or end with a space");
+                        u.Append(@"\20");
+                        break;
+                    case '"':
+                        u.Append(@"\22");
+                        break;
+                    case '&':
+                        u.Append(@"\26");
+                        break;
+                    case '\'':
+                        u.Append(@"\27");
+                        break;
+                    case '/':
+                        u.Append(@"\2f");
+                        break;
+                    case ':':
+                        u.Append(@"\3a");
+                        break;
+                    case '<':
+                        u.Append(@"\3c");
+                        break;
+                    case '>':
+                        u.Append(@"\3e");
+                        break;
+                    case '@':
+                        u.Append(@"\40");
+                        break;
+                    case '\\':
+                        u.Append(@"\5c");
+                        break;
+                    default:
+                        u.Append(c);
+                        break;
+                }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="one"></param>
-        /// <returns></returns>
-        public static implicit operator JID(string one)
-        {
-            return new JID(one);
-        }
+                count++;
+            }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="one"></param>
-        /// <returns></returns>
-        public static implicit operator string(JID one)
-        {
-            return one.XmppId;
+            return u.ToString();
         }
 
         /// <summary>
@@ -243,58 +295,6 @@ namespace Ubiety.Xmpp.Common
                     }
                 }
             }
-        }
-
-        private static string Escape(string user)
-        {
-            var u = new StringBuilder();
-            var count = 0;
-
-            foreach (var c in user)
-            {
-                switch (c)
-                {
-                    case ' ':
-                        if ((count == 0) || (count == (user.Length - 1)))
-                            throw new FormatException("Username cannot start or end with a space");
-                        u.Append(@"\20");
-                        break;
-                    case '"':
-                        u.Append(@"\22");
-                        break;
-                    case '&':
-                        u.Append(@"\26");
-                        break;
-                    case '\'':
-                        u.Append(@"\27");
-                        break;
-                    case '/':
-                        u.Append(@"\2f");
-                        break;
-                    case ':':
-                        u.Append(@"\3a");
-                        break;
-                    case '<':
-                        u.Append(@"\3c");
-                        break;
-                    case '>':
-                        u.Append(@"\3e");
-                        break;
-                    case '@':
-                        u.Append(@"\40");
-                        break;
-                    case '\\':
-                        u.Append(@"\5c");
-                        break;
-                    default:
-                        u.Append(c);
-                        break;
-                }
-
-                count++;
-            }
-
-            return u.ToString();
         }
 
         private string Unescape()

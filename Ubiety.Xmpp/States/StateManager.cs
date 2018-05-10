@@ -7,29 +7,29 @@ using Ubiety.Xmpp.Net;
 namespace Ubiety.Xmpp.States
 {
     /// <summary>
-    ///     
+    ///     Manage the state of the library and protocol
     /// </summary>
     public class StateManager
     {
-        private readonly StateMachine<State, StateTriggers> stateMachine;
-        private readonly StateMachine<State, StateTriggers>.TriggerWithParameters<ISocket> connectTrigger;
+        private readonly StateMachine<State, StateTrigger> stateMachine;
+        private readonly StateMachine<State, StateTrigger>.TriggerWithParameters<ISocket> connectTrigger;
 
         /// <summary>
         /// </summary>
         public StateManager()
         {
-            stateMachine = new StateMachine<State, StateTriggers>(new DisconnectedState());
+            stateMachine = new StateMachine<State, StateTrigger>(new DisconnectedState());
 
-            stateMachine.Configure(new DisconnectState()).Permit(StateTriggers.Disconnect, new DisconnectedState());
+            stateMachine.Configure(new DisconnectState()).Permit(StateTrigger.Disconnect, new DisconnectedState());
 
-            connectTrigger = stateMachine.SetTriggerParameters<ISocket>(StateTriggers.Connect);
-            stateMachine.Configure(new DisconnectedState()).Permit(StateTriggers.Connect, new ConnectState());
+            connectTrigger = stateMachine.SetTriggerParameters<ISocket>(StateTrigger.Connect);
+            stateMachine.Configure(new DisconnectedState()).Permit(StateTrigger.Connect, new ConnectState());
             stateMachine.Configure(new ConnectState()).OnEntryFrom(connectTrigger, ConnectState.Connect);
         }
 
         /// <summary>
         /// </summary>
-        public void Fire(StateTriggers triggers)
+        public void Fire(StateTrigger triggers)
         {
             stateMachine.Fire(triggers);
         }

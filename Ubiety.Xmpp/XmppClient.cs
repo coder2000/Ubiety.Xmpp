@@ -12,20 +12,20 @@ namespace Ubiety.Xmpp
     /// <summary>
     ///     Main class
     /// </summary>
-    public class Xmpp
+    public class XmppClient
     {
         private readonly IConfigurationBuilder configuration;
         private readonly StateManager stateManager;
 
         /// <summary>
-        ///     Construct a new instance
+        ///     Initializes a new instance of the <see cref="XmppClient" /> class
         /// </summary>
-        public Xmpp()
+        public XmppClient()
         {
-            configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+            this.configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("XmppConfig.json");
 
-            stateManager = new StateManager();
+            this.stateManager = new StateManager();
         }
 
         /// <summary>
@@ -38,8 +38,8 @@ namespace Ubiety.Xmpp
         /// </summary>
         public void Connect()
         {
-            var socket = new AsyncSocket(configuration.Build());
-            stateManager.FireConnect(socket);
+            var socket = new AsyncSocket(this.configuration.Build());
+            this.stateManager.FireConnect(socket);
         }
     }
 }

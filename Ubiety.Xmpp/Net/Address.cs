@@ -14,65 +14,73 @@ using NLog;
 namespace Ubiety.Xmpp.Net
 {
     /// <summary>
+    ///     Network address for an XMPP server
     /// </summary>
     public sealed class Address
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private readonly IConfiguration _config;
-        private readonly Resolver _resolver;
-        private int _srvAttempts;
-        private IEnumerable<RecordSRV> _srvRecords = new List<RecordSRV>();
+        private readonly IConfiguration config;
+        private readonly Resolver resolver;
+        private int srvAttempts;
+        private IEnumerable<RecordSRV> srvRecords = new List<RecordSRV>();
 
         /// <summary>
+        ///     Initializes a new instance of the <see cref="Address" /> class
         /// </summary>
+        /// <param name="config">Library configuration</param>
         public Address(IConfiguration config)
         {
-            _config = config;
+            this.config = config;
 
             Logger.Debug("DNS Servers:");
             foreach (var dnsServer in GetDnsServers())
                 Logger.Debug(dnsServer.ToString());
 
-            _resolver = new Resolver(GetDnsServers())
+            this.resolver = new Resolver(GetDnsServers())
             {
                 UseCache = true,
                 Timeout = TimeSpan.FromSeconds(5),
                 TransportType = TransportType.Tcp
             };
 
-            _resolver.OnVerbose += (sender, args) => { Logger.Debug($"DNS verbose message: {args.Message}"); };
+            this.resolver.OnVerbose += (sender, args) => { Logger.Debug($"DNS verbose message: {args.Message}"); };
         }
 
         /// <summary>
+        ///     Gets or sets the server hostname
         /// </summary>
-        public string Hostname { private get; set; }
+        public string Hostname { get; set; }
+
         /// <summary>
+        ///     Gets a value whether the address is IPv6 or not
         /// </summary>
         public bool IsIPv6 { get; private set; }
 
         /// <summary>
+        ///     Gets the next ip address for the server
         /// </summary>
+        /// <returns><see cref="IPEndPoint" /> of the server from dns</returns>
         public IPEndPoint NextIpAddress()
         {
             IPAddress address;
 
             if (IPAddress.TryParse(Hostname, out address))
-                return new IPEndPoint(address, _config.GetValue<int>("XmppConfiguration:DefaultPort"));
+                return new IPEndPoint(address, this.config.GetValue<int>("XmppConfiguration:DefaultPort"));
 
             var srvAvailable = false;
-            if (!_srvRecords.Any())
+            if (!this.srvRecords.Any())
                 srvAvailable = ResolveSrv();
 
-            if (srvAvailable || (_srvRecords.Any() && _srvAttempts <= _srvRecords.Count()))
+            if (srvAvailable || (this.srvRecords.Any() && this.srvAttempts <= this.srvRecords.Count()))
             {
                 Logger.Debug("Found SRV record...");
-                var port = _srvRecords.ElementAt(_srvAttempts).PORT;
-                var target = _srvRecords.ElementAt(_srvAttempts).TARGET;
+                var port = this.srvRecords.ElementAt(this.srvAttempts).PORT;
+                var target = this.srvRecords.ElementAt(this.srvAttempts).TARGET;
 
                 Logger.Debug($"Resolving {target}...");
                 address = Resolve(target);
 
-                _srvAttempts++;
+                this.srvAttempts++;
 
                 Logger.Debug($"Found address {address}...");
 
@@ -82,13 +90,13 @@ namespace Ubiety.Xmpp.Net
             Logger.Debug($"No SRV. Resolving {Hostname}...");
             address = Resolve(Hostname);
             Logger.Debug($"Found address {address}...");
-            return new IPEndPoint(address, _config.GetValue<int>("XmppConfiguration:DefaultPort"));
+            return new IPEndPoint(address, this.config.GetValue<int>("XmppConfiguration:DefaultPort"));
         }
 
         private bool ResolveSrv()
         {
             Logger.Debug("Resolving SRV records...");
-            var response = _resolver.Query($"_xmpp-client._tcp.{Hostname}", QType.SRV).Result;
+            var response = this.resolver.Query($"_xmpp-client._tcp.{Hostname}", QType.SRV).Result;
 
             if (!string.IsNullOrEmpty(response.Error))
             {
@@ -102,7 +110,7 @@ namespace Ubiety.Xmpp.Net
                 return false;
             }
 
-            _srvRecords = response.RecordsSRV.OrderBy(record => record.PRIORITY)
+            this.srvRecords = response.RecordsSRV.OrderBy(record => record.PRIORITY)
                 .ThenByDescending(record => record.WEIGHT);
 
             return true;
@@ -112,10 +120,10 @@ namespace Ubiety.Xmpp.Net
         {
             Response response;
 
-            if (Socket.OSSupportsIPv6 && _config.GetValue<bool>("XmppConfiguration:UseIPv6"))
+            if (Socket.OSSupportsIPv6 && this.config.GetValue<bool>("XmppConfiguration:UseIPv6"))
             {
                 Logger.Debug("Resolving IPv6 address...");
-                response = _resolver.Query(hostname, QType.AAAA).Result;
+                response = this.resolver.Query(hostname, QType.AAAA).Result;
 
                 if (response.RecordsAAAA.Length > 0)
                 {
@@ -125,7 +133,7 @@ namespace Ubiety.Xmpp.Net
             }
 
             Logger.Debug("Resolving IPv4 address...");
-            response = _resolver.Query(hostname, QType.A).Result;
+            response = this.resolver.Query(hostname, QType.A).Result;
 
             return response.RecordsA.FirstOrDefault().Address;
         }
@@ -135,7 +143,7 @@ namespace Ubiety.Xmpp.Net
             var addresses = new List<string>();
             for (var i = 0; i < 4; i++)
             {
-                var server = _config.GetValue<string>($"XmppConfiguration:DnsServers:{i}");
+                var server = this.config.GetValue<string>($"XmppConfiguration:DnsServers:{i}");
                 if (server == null) continue;
                 addresses.Add(server);
             }

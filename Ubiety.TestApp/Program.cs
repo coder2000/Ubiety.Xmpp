@@ -4,7 +4,7 @@
     {
         private static void Main(string[] args)
         {
-            var xmpp = new Xmpp.Xmpp();
+            var xmpp = new Xmpp.XmppClient();
             xmpp.Connect();
         }
     }

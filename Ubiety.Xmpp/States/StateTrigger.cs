@@ -4,16 +4,22 @@
 namespace Ubiety.Xmpp.States
 {
     /// <summary>
+    ///     Protocol state triggers
     /// </summary>
-    public enum StateTriggers
+    public enum StateTrigger
     {
         /// <summary>
+        ///     Connect state
         /// </summary>
         Connect,
+
         /// <summary>
+        ///     Connected state
         /// </summary>
         Connected,
+
         /// <summary>
+        ///     Disconnect state
         /// </summary>
         Disconnect
     }
