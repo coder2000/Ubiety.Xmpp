@@ -19,25 +19,27 @@ namespace Ubiety.Xmpp.Common
         private string xid;
 
         /// <summary>
-        ///     Creates a new JID from a string representation
+        ///     Initializes a new instance of the <see cref="JID" /> class.
         /// </summary>
         /// <param name="xid">String form of a JID like "user@server.com/home"</param>
-        public JID(string xid) : this()
+        public JID(string xid)
+            : this()
         {
-            XmppId = xid;
+            this.XmppId = xid;
         }
 
         /// <summary>
-        ///     Creates a new JID from its parts
+        ///     Initializes a new instance of the <see cref="JID" /> class.
         /// </summary>
         /// <param name="user">Username to be authenticated</param>
         /// <param name="server">Server address to lookup and connect to</param>
         /// <param name="resource">Resource to bind to - may be blank</param>
-        public JID(string user, string server, string resource = "") : this()
+        public JID(string user, string server, string resource = "")
+            : this()
         {
-            User = user;
-            Server = server;
-            Resource = resource;
+            this.User = user;
+            this.Server = server;
+            this.Resource = resource;
         }
 
         /// <summary>
@@ -45,11 +47,11 @@ namespace Ubiety.Xmpp.Common
         /// </summary>
         public string User
         {
-            get => Unescape();
+            get => this.Unescape();
             private set
             {
                 var tmp = Escape(value);
-                user = Stringprep.NodePrep(tmp);
+                this.user = Stringprep.NodePrep(tmp);
             }
         }
 
@@ -58,8 +60,8 @@ namespace Ubiety.Xmpp.Common
         /// </summary>
         public string Server
         {
-            get => server;
-            private set => server = (value == null) ? null : Stringprep.NamePrep(value);
+            get => this.server;
+            private set => this.server = (value == null) ? null : Stringprep.NamePrep(value);
         }
 
         /// <summary>
@@ -67,8 +69,8 @@ namespace Ubiety.Xmpp.Common
         /// </summary>
         public string Resource
         {
-            get => resource;
-            private set => resource = (value == null) ? null : Stringprep.ResourcePrep(value);
+            get => this.resource;
+            private set => this.resource = (value == null) ? null : Stringprep.ResourcePrep(value);
         }
 
         /// <summary>
@@ -76,55 +78,80 @@ namespace Ubiety.Xmpp.Common
         /// </summary>
         private string XmppId
         {
-            get => xid ?? BuildJid();
-            set => Parse(value);
+            get => this.xid ?? this.BuildJid();
+            set => this.Parse(value);
         }
 
         /// <summary>
+        ///     Implicitly converts a string to a <see cref="JID" />
         /// </summary>
-        /// <param name="one"></param>
-        /// <returns></returns>
-        public static implicit operator JID(string one)
+        /// <param name="jid">String to convert</param>
+        /// <returns>Jabber ID version of the string</returns>
+        public static implicit operator JID(string jid)
         {
-            return new JID(one);
+            return new JID(jid);
         }
 
         /// <summary>
+        ///     Implicitly converts a <see cref="JID" /> to a string
         /// </summary>
-        /// <param name="one"></param>
-        /// <returns></returns>
-        public static implicit operator string(JID one)
+        /// <param name="jid">JID to convert</param>
+        /// <returns>String version of the JID</returns>
+        public static implicit operator string(JID jid)
         {
-            return one.XmppId;
+            return jid.XmppId;
         }
 
         /// <summary>
+        ///     Does one JID equal another
         /// </summary>
-        /// <param name="one"></param>
-        /// <param name="two"></param>
-        /// <returns></returns>
+        /// <param name="one">First JID</param>
+        /// <param name="two">Second JID</param>
+        /// <returns>True if the JIDs are equal</returns>
         public static bool operator ==(JID one, JID two)
         {
             return one.Equals(two);
         }
 
         /// <summary>
+        ///     Are the two JIDs not equal
         /// </summary>
-        /// <param name="one"></param>
-        /// <param name="two"></param>
-        /// <returns></returns>
+        /// <param name="one">First JID</param>
+        /// <param name="two">Second JID</param>
+        /// <returns>True if the JIDs are not equal</returns>
         public static bool operator !=(JID one, JID two)
         {
             return !one.Equals(two);
         }
 
         /// <summary>
+        ///     Convert a string into a <see cref="JID" />
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
+        /// <param name="jid">String to convert to a JID</param>
+        /// <returns>JID version of the string</returns>
+        public static JID ToJID(string jid)
+        {
+            return new JID(jid);
+        }
+
+        /// <summary>
+        ///     Convert a <see cref="JID" /> to a string
+        /// </summary>
+        /// <param name="jid">JID to convert to a string</param>
+        /// <returns>String version of the JID</returns>
+        public static string FromJID(JID jid)
+        {
+            return jid.XmppId;
+        }
+
+        /// <summary>
+        ///     This this JID equal another
+        /// </summary>
+        /// <param name="other">JID to compare equality to</param>
+        /// <returns>True if the JIDs are equal</returns>
         public bool Equals(JID other)
         {
-            return XmppId.Equals(other.XmppId);
+            return this.XmppId.Equals(other.XmppId, StringComparison.InvariantCulture);
         }
 
         /// <summary>
@@ -137,26 +164,28 @@ namespace Ubiety.Xmpp.Common
             {
                 var hash = 17;
 
-                hash = hash*23 + User.GetHashCode();
-                hash = hash*23 + Resource.GetHashCode();
-                hash = hash*23 + Server.GetHashCode();
+                hash = (hash * 23) + this.User.GetHashCode();
+                hash = hash * (23 + this.Resource.GetHashCode());
+                hash = (hash * 23) + this.Server.GetHashCode();
 
                 return hash;
             }
         }
 
         /// <summary>
+        ///     Gets a string representation of the class
         /// </summary>
-        /// <returns></returns>
+        /// <returns>String version of the JID</returns>
         public override string ToString()
         {
-            return XmppId;
+            return this.XmppId;
         }
 
         /// <summary>
+        ///     Does one JID equal another
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        /// <param name="obj">JID to compare the current instance to</param>
+        /// <returns>True if the JIDs are equal</returns>
         public override bool Equals(object obj)
         {
             if (obj == null)
@@ -166,7 +195,7 @@ namespace Ubiety.Xmpp.Common
 
             if (obj is string)
             {
-                return XmppId.Equals(obj);
+                return this.XmppId.Equals(obj);
             }
 
             if (!(obj is JID))
@@ -174,7 +203,7 @@ namespace Ubiety.Xmpp.Common
                 return false;
             }
 
-            return XmppId.Equals(((JID)obj).XmppId);
+            return this.XmppId.Equals(((JID)obj).XmppId, StringComparison.InvariantCulture);
         }
 
         private static string Escape(string user)
@@ -188,7 +217,10 @@ namespace Ubiety.Xmpp.Common
                 {
                     case ' ':
                         if ((count == 0) || (count == (user.Length - 1)))
+                        {
                             throw new FormatException("Username cannot start or end with a space");
+                        }
+
                         u.Append(@"\20");
                         break;
                     case '"':
@@ -236,26 +268,27 @@ namespace Ubiety.Xmpp.Common
         private string BuildJid()
         {
             var sb = new StringBuilder();
-            if (user != null)
+            if (this.user != null)
             {
-                sb.Append(user);
+                sb.Append(this.user);
                 sb.Append("@");
             }
 
-            sb.Append(server);
-            if (resource != null)
+            sb.Append(this.server);
+            if (this.resource != null)
             {
                 sb.Append("/");
-                sb.Append(resource);
+                sb.Append(this.resource);
             }
 
-            xid = sb.ToString();
-            return xid;
+            this.xid = sb.ToString();
+            return this.xid;
         }
 
         /// <summary>
         ///     Takes a string xid and breaks it into its parts.
         /// </summary>
+        /// <param name="id">JID to convert to string parts</param>
         private void Parse(string id)
         {
             var at = id.IndexOf('@');
@@ -265,33 +298,33 @@ namespace Ubiety.Xmpp.Common
             {
                 if (slash == -1)
                 {
-                    Server = id;
+                    this.Server = id;
                 }
                 else
                 {
-                    Server = id.Substring(0, slash);
-                    Resource = id.Substring(slash + 1);
+                    this.Server = id.Substring(0, slash);
+                    this.Resource = id.Substring(slash + 1);
                 }
             }
             else
             {
                 if (slash == -1)
                 {
-                    User = id.Substring(0, at);
-                    Server = id.Substring(at + 1);
+                    this.User = id.Substring(0, at);
+                    this.Server = id.Substring(at + 1);
                 }
                 else
                 {
                     if (at < slash)
                     {
-                        User = id.Substring(0, at);
-                        Server = id.Substring(at + 1, slash - at - 1);
-                        Resource = id.Substring(slash + 1);
+                        this.User = id.Substring(0, at);
+                        this.Server = id.Substring(at + 1, slash - at - 1);
+                        this.Resource = id.Substring(slash + 1);
                     }
                     else
                     {
-                        Server = id.Substring(0, slash);
-                        Resource = id.Substring(slash + 1);
+                        this.Server = id.Substring(0, slash);
+                        this.Resource = id.Substring(slash + 1);
                     }
                 }
             }
@@ -300,7 +333,7 @@ namespace Ubiety.Xmpp.Common
         private string Unescape()
         {
             var re = new Regex(@"\\([2-5][0267face])");
-            var u = re.Replace(user, delegate(Match m)
+            var u = re.Replace(this.user, (Match m) =>
             {
                 switch (m.Groups[1].Value)
                 {

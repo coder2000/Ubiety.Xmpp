@@ -22,7 +22,7 @@ namespace Ubiety.Xmpp.Net
         event EventHandler Connected;
 
         /// <summary>
-        ///     Gets a value if a socket is connected or not
+        ///     Gets a value indicating whether the socket is connected
         /// </summary>
         bool IsConnected { get; }
 

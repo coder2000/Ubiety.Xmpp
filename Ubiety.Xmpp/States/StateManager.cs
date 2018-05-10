@@ -15,30 +15,39 @@ namespace Ubiety.Xmpp.States
         private readonly StateMachine<State, StateTrigger>.TriggerWithParameters<ISocket> connectTrigger;
 
         /// <summary>
+        ///     Initializes a new instance of the <see cref="StateManager" /> class
         /// </summary>
         public StateManager()
         {
-            stateMachine = new StateMachine<State, StateTrigger>(new DisconnectedState());
+            this.stateMachine = new StateMachine<State, StateTrigger>(new DisconnectedState());
 
-            stateMachine.Configure(new DisconnectState()).Permit(StateTrigger.Disconnect, new DisconnectedState());
+            this.stateMachine.Configure(new DisconnectState())
+                .Permit(StateTrigger.Disconnect, new DisconnectedState());
 
-            connectTrigger = stateMachine.SetTriggerParameters<ISocket>(StateTrigger.Connect);
-            stateMachine.Configure(new DisconnectedState()).Permit(StateTrigger.Connect, new ConnectState());
-            stateMachine.Configure(new ConnectState()).OnEntryFrom(connectTrigger, ConnectState.Connect);
+            this.stateMachine.Configure(new DisconnectedState())
+                .Permit(StateTrigger.Connect, new ConnectState());
+
+            this.connectTrigger = this.stateMachine.SetTriggerParameters<ISocket>(StateTrigger.Connect);
+            this.stateMachine.Configure(new ConnectState())
+                .OnEntryFrom(this.connectTrigger, ConnectState.Connect);
         }
 
         /// <summary>
+        ///     Change the current state to the desired state
         /// </summary>
-        public void Fire(StateTrigger triggers)
+        /// <param name="trigger">State to trigger the change to</param>
+        public void ChangeState(StateTrigger trigger)
         {
-            stateMachine.Fire(triggers);
+            this.stateMachine.Fire(trigger);
         }
 
         /// <summary>
+        ///     Change to the connect state
         /// </summary>
+        /// <param name="socket">Socket used to make the connection</param>
         public void FireConnect(ISocket socket)
         {
-            stateMachine.Fire(connectTrigger, socket);
+            this.stateMachine.Fire(this.connectTrigger, socket);
         }
     }
 }

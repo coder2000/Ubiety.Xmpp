@@ -44,7 +44,7 @@ namespace Ubiety.Xmpp.Net
         public event EventHandler Connected;
 
         /// <summary>
-        ///     Gets a value whether the socket is connected or not
+        ///     Gets a value indicating whether the socket is connected
         /// </summary>
         public bool IsConnected { get; private set; }
 
@@ -67,7 +67,7 @@ namespace Ubiety.Xmpp.Net
                 : new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             var args = new SocketAsyncEventArgs { RemoteEndPoint = address };
-            args.Completed += ConnectCompleted;
+            args.Completed += this.ConnectCompleted;
 
             this.socket.ConnectAsync(args);
         }
@@ -83,7 +83,7 @@ namespace Ubiety.Xmpp.Net
                 throw new ArgumentNullException(nameof(jid));
             }
 
-            Connect(jid.Server);
+            this.Connect(jid.Server);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Ubiety.Xmpp.Net
         /// </summary>
         public void Disconnect()
         {
-            IsConnected = false;
+            this.IsConnected = false;
             this.socket.Shutdown(SocketShutdown.Both);
         }
 
@@ -100,9 +100,9 @@ namespace Ubiety.Xmpp.Net
         /// </summary>
         public void Dispose()
         {
-            if (IsConnected)
+            if (this.IsConnected)
             {
-                Disconnect();
+                this.Disconnect();
             }
 
             this.stream.Dispose();
@@ -131,30 +131,30 @@ namespace Ubiety.Xmpp.Net
         private void OnData(string data)
         {
             var args = new DataEventArgs(data);
-            Data?.Invoke(this, args);
+            this.Data?.Invoke(this, args);
         }
 
         private void OnConnected()
         {
-            Connected?.Invoke(this, new EventArgs());
+            this.Connected?.Invoke(this, new EventArgs());
         }
 
         private async void ConnectCompleted(object sender, SocketAsyncEventArgs e)
         {
-            IsConnected = true;
-            OnConnected();
+            this.IsConnected = true;
+            this.OnConnected();
 
             this.cts = new CancellationTokenSource(5000);
 
             this.stream = new NetworkStream(e.ConnectSocket);
-            var data = await ReadData(this.cts.Token);
-            await ReadDataContinuous(data);
+            var data = await this.ReadData(this.cts.Token).ConfigureAwait(false);
+            await this.ReadDataContinuous(data).ConfigureAwait(false);
         }
 
         private async Task<string> ReadData(CancellationToken token)
         {
             var buffer = new byte[4096];
-            var result = await this.stream.ReadAsync(buffer, 0, buffer.Length, token);
+            var result = await this.stream.ReadAsync(buffer, 0, buffer.Length, token).ConfigureAwait(false);
             Array.Resize(ref buffer, result);
             return Encoding.ASCII.GetString(buffer);
         }
@@ -163,12 +163,14 @@ namespace Ubiety.Xmpp.Net
         {
             while (true)
             {
-                if (IsConnected == false)
+                if (this.IsConnected == false)
+                {
                     break;
+                }
 
-                OnData(data);
+                this.OnData(data);
 
-                var text = await ReadData(this.cts.Token);
+                var text = await this.ReadData(this.cts.Token).ConfigureAwait(false);
                 data = text;
             }
         }

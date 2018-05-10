@@ -11,13 +11,17 @@ namespace Ubiety.Xmpp.States
     public class ConnectState : State
     {
         /// <summary>
-        ///     Create a new instance of the Connect state
+        ///     Initializes a new instance of the <see cref="ConnectState" /> class
         /// </summary>
-        public ConnectState() : base("Connect") { }
+        public ConnectState()
+            : base("Connect")
+        {
+        }
 
         /// <summary>
         ///     Initiate connection to the server
         /// </summary>
+        /// <param name="socket">Socket to connect to</param>
         public static void Connect(ISocket socket)
         {
             socket.Connect("dieterlunn.ca");

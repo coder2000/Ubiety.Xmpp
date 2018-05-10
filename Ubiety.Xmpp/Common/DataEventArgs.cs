@@ -11,12 +11,12 @@ namespace Ubiety.Xmpp.Common
     public class DataEventArgs : EventArgs
     {
         /// <summary>
-        ///     Create a new instance of DataEventArgs
+        ///     Initializes a new instance of the <see cref="DataEventArgs" /> class
         /// </summary>
         /// <param name="data">Data for the args to store</param>
         public DataEventArgs(string data)
         {
-            Data = data;
+            this.Data = data;
         }
 
         /// <summary>
